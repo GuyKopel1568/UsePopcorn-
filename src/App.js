@@ -400,6 +400,8 @@ function WatchedMovie({ movie, onDelete }) {
           <span>🌟</span>
           <span>{movie.userRating}</span>
         </p>
+
+        <button className="btn-delete" onClick={() => onDelete(movie.imdbID)}> X </button> 
       </div>
     </li>
   );

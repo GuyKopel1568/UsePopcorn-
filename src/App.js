@@ -394,11 +394,11 @@ function WatchedMovie({ movie, onDelete }) {
         </p>
         <p>
           <span>⭐️</span>
-          <span>{movie.imdbRating}</span>
+          <span>{movie.imdbRating.toFixed(2)}</span>
         </p>
         <p>
           <span>🌟</span>
-          <span>{movie.userRating}</span>
+          <span>{movie.userRating.toFixed(2)}</span>
         </p>
 
         <button className="btn-delete" onClick={() => onDelete(movie.imdbID)}> X </button> 

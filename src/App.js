@@ -293,6 +293,10 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
 
   const watchedUserRating = watched.find((movie) => movie.imdbID === selectedId)?.userRating;
 
+  useEffect(function() {
+    document.title = `Movie | ${title}`;
+  }, [title]);
+
   return (
     <div className="details">
       {isLoading ? (

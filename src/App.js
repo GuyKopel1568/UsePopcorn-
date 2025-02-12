@@ -1,6 +1,5 @@
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, useRef } from "react";
 import StarRating from "./StarRating";
-import { on } from "process";
 const tempMovieData = [
   {
     imdbID: "tt1375666",
@@ -201,10 +200,16 @@ function Navbar({ children }) {
 }
 
 function Search({ query, setQuery }) {
+  const inputEl =useRef(null);
+  // useEffect(function(){
+  //   const input = document.querySelector(".search");
+  //   input.focus();
+  // }, []);
+
   useEffect(function(){
-    const input = document.querySelector(".search");
-    input.focus();
+    inputEl.current.focus();
   }, []);
+  
 
   return (
     <input
@@ -213,6 +218,7 @@ function Search({ query, setQuery }) {
       placeholder="Search movies..."
       value={query}
       onChange={(e) => setQuery(e.target.value)}
+      ref={inputEl}
     />
   );
 }

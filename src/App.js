@@ -55,10 +55,16 @@ const KEY = "e1136390";
 export default function App() {
   const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedId, setSelectedId] = useState(null);
+  // const [watched, setWatched] = useState([]);
+
+  const [watched, setWatched] = useState(function(){
+    const storedValue = localStorage.getItem("watched");
+    return storedValue ? JSON.parse(storedValue) : [];
+  });
+
 
   function handleSelectMovie(id) {
     setSelectedId(selectedId === id ? null : id);
@@ -70,11 +76,17 @@ export default function App() {
 
   function handleAddWatched(movie){
     setWatched((watched) => [...watched, movie]);
+
+    // localStorage.setItem("watched", JSON.stringify([...watched, movie]));
   }
 
   function handleDeleteWatched(id){
     setWatched(watched.filter((movie) => movie.imdbID !== id));
   }
+
+  useEffect(function(){
+      localStorage.setItem("watched", JSON.stringify(watched));
+  }, [watched]);
 
   useEffect(
     function () {
@@ -115,6 +127,8 @@ export default function App() {
         setError("");
         return;
       }
+
+      handleCloseMovie();
 
       fetchMovies();
 
@@ -303,12 +317,19 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     onCloseMovie();
   }
 
-  useEffect(function(){
-    document.addEventListener("keydown", function(event){
+  useEffect(
+    function(){
+    function callback(event){
       if(event.code === "Escape" ){
         onCloseMovie();
       }
-    });
+    }
+    
+    document.addEventListener("keydown", callback);
+
+    return function(){
+      document.removeEventListener("keydown", callback)
+    };
   }, [onCloseMovie]);
 
 

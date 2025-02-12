@@ -201,6 +201,11 @@ function Navbar({ children }) {
 }
 
 function Search({ query, setQuery }) {
+  useEffect(function(){
+    const input = document.querySelector(".search");
+    input.focus();
+  }, []);
+
   return (
     <input
       className="search"

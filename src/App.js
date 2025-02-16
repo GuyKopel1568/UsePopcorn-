@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import StarRating from "./StarRating";
 import { useMovies } from "./useMovies";
 import { useLocalStorageState } from "./useLocalStorageState";
+import { useKey } from "./useKey";
 
 const KEY = "e1136390";
 const average = (arr) => arr.reduce((acc, cur) => acc + cur / arr.length, 0);
@@ -215,7 +216,7 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
   } = movie;
 
   useEffect(() => {
-    async function getMovieDeatails() {
+    async function getMovieDetails() {
       setIsLoading(true);
       const res = await fetch(
         `http://www.omdbapi.com/?apikey=${KEY}&i=${selectedId}`
@@ -224,7 +225,7 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
       setMovie(data);
       setIsLoading(false);
     }
-    getMovieDeatails();
+    getMovieDetails();
   }, [selectedId]);
 
   function handleAdd() {
@@ -242,22 +243,7 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     onCloseMovie();
   }
 
-  useEffect(
-    function () {
-      function callback(event) {
-        if (event.code === "Escape") {
-          onCloseMovie();
-        }
-      }
-
-      document.addEventListener("keydown", callback);
-
-      return function () {
-        document.removeEventListener("keydown", callback);
-      };
-    },
-    [onCloseMovie]
-  );
+  useKey("Escape", onCloseMovie);
 
   useEffect(
     function () {

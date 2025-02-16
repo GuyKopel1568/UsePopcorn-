@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, use } from "react";
 import StarRating from "./StarRating";
 const tempMovieData = [
   {
@@ -201,14 +201,21 @@ function Navbar({ children }) {
 
 function Search({ query, setQuery }) {
   const inputEl =useRef(null);
-  // useEffect(function(){
-  //   const input = document.querySelector(".search");
-  //   input.focus();
-  // }, []);
 
   useEffect(function(){
-    inputEl.current.focus();
-  }, []);
+    function callback(event){
+      if(document.activeElement === inputEl.current)
+         return;
+
+      if(event.code === "Enter"){
+      inputEl.current.focus();
+      setQuery("");
+    }
+  }
+
+    document.addEventListener("keydown", callback);
+    return () => document.addEventListener("keydown", callback);   
+  }, [setQuery]);
   
 
   return (
@@ -285,6 +292,16 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
   const [movie, setMovie] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState('');
+  
+  const countRef = useRef(0);
+
+  useEffect(function(){
+    if(userRating)
+      countRef.current = countRef.current+1;
+  }, [userRating]);
+
+  const isWatched = watched.map((movie) => movie.imdbID).includes(selectedId);
+  const watchedUserRating = watched.find((movie) => movie.imdbID === selectedId)?.userRating;
 
   const {
     Title: title,
@@ -322,7 +339,8 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
       poster,
       imdbRating: Number(imdbRating),
       runtime: Number(runtime.split(" ")[0]),
-      userRating: Number(userRating)
+      userRating: Number(userRating),
+      countRatingDescisions: countRef.current
     };
     onAddWatched(newWatchedMovie);
     onCloseMovie();
@@ -344,9 +362,8 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
   }, [onCloseMovie]);
 
 
-  const isWatched = watched.map((movie) => movie.imdbID).includes(selectedId);
 
-  const watchedUserRating = watched.find((movie) => movie.imdbID === selectedId)?.userRating;
+
 
   useEffect(function() {
     if(!title) return;
